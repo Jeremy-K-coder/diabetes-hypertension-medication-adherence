@@ -1,0 +1,197 @@
+# ============================================================
+# diabetes-hypertension-medication-adherence — .gitignore
+# ============================================================
+
+# ------------------------------------------------------------
+# DATA — raw or processed patient data
+# ------------------------------------------------------------
+data/raw/
+data/processed/
+data/interim/
+*.xlsx
+*.xls
+*.csv
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.db
+*.sqlite
+
+# ------------------------------------------------------------
+# MODEL ARTEFACTS — too large for git; use Drive/DVC instead
+# ------------------------------------------------------------
+models/
+*.joblib
+*.model
+*.bin
+*.pt
+*.pth
+
+# ------------------------------------------------------------
+# NOTEBOOK OUTPUTS — strip before committing
+# (keep .ipynb files but not their executed outputs)
+# Run: jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
+# ------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+# PYTHON
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+*.pyo
+
+# ------------------------------------------------------------
+# VIRTUAL ENVIRONMENTS
+# ------------------------------------------------------------
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# ------------------------------------------------------------
+# ENVIRONMENT / SECRETS
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets.yaml
+secrets.json
+*.key
+*.pem
+credentials.json
+
+# ------------------------------------------------------------
+# IDEs & EDITORS
+# ------------------------------------------------------------
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Jupyter
+.jupyter/
+profile_default/
+ipython_config.py
+
+# Spyder
+.spyderproject.db
+.spyproject/
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+.#*
+
+# ------------------------------------------------------------
+# OS
+# ------------------------------------------------------------
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ------------------------------------------------------------
+# LOGS & TEMPORARY FILES
+# ------------------------------------------------------------
+logs/
+*.log
+*.out
+*.err
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# ------------------------------------------------------------
+# REPORTS — PDFs tracked separately via Drive link in README
+# ------------------------------------------------------------
+reports/*.pdf
+
+# ------------------------------------------------------------
+# FIGURES — committed selectively; exclude large intermediates
+# ------------------------------------------------------------
+figures/interim/
+figures/scratch/
+
+# ------------------------------------------------------------
+# COLAB & KAGGLE ARTEFACTS
+# ------------------------------------------------------------
+drive/
+sample_data/
+kaggle.json
+
+# ------------------------------------------------------------
+# PYTEST & COVERAGE
+# ------------------------------------------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ------------------------------------------------------------
+# MYPY / TYPE CHECKING
+# ------------------------------------------------------------
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ------------------------------------------------------------
+# DISTRIBUTION / PACKAGING
+# ------------------------------------------------------------
+MANIFEST
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.eggs/

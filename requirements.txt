@@ -1,0 +1,72 @@
+# ============================================================
+# diabetes-hypertension-medication-adherence — requirements.txt
+# Python 3.10+
+# Install: pip install -r requirements.txt
+# ============================================================
+
+# ------------------------------------------------------------
+# CORE DATA SCIENCE
+# ------------------------------------------------------------
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.1
+
+# ------------------------------------------------------------
+# MACHINE LEARNING — Classical
+# ------------------------------------------------------------
+scikit-learn==1.5.1
+xgboost==2.1.0
+
+# ------------------------------------------------------------
+# CLASS IMBALANCE HANDLING
+# ------------------------------------------------------------
+imbalanced-learn==0.12.3          # SMOTE and related resampling methods
+
+# ------------------------------------------------------------
+# EXPLAINABILITY
+# ------------------------------------------------------------
+shap==0.45.1                      # SHAP values: beeswarm, dependence, waterfall plots
+
+# ------------------------------------------------------------
+# VISUALISATION
+# ------------------------------------------------------------
+matplotlib==3.9.1
+seaborn==0.13.2
+plotly==5.22.0                    # Interactive figures (optional, for EDA)
+
+# ------------------------------------------------------------
+# NOTEBOOK ENVIRONMENT
+# ------------------------------------------------------------
+jupyter==1.0.0
+jupyterlab==4.2.3
+ipykernel==6.29.5
+ipywidgets==8.1.3                 # Progress bars and interactive widgets in notebooks
+nbformat==5.10.4                  # Notebook format validation
+
+# ------------------------------------------------------------
+# DATA I/O
+# ------------------------------------------------------------
+openpyxl==3.1.5                   # Read/write .xlsx files (Final Dataset.xlsx)
+xlrd==2.0.1                       # Legacy .xls support (raw wrangling files)
+
+# ------------------------------------------------------------
+# STATISTICS & EVALUATION
+# ------------------------------------------------------------
+statsmodels==0.14.2               # Logistic regression summary tables, statistical tests
+pingouin==0.5.4                   # Effect size, normality tests for EDA
+
+# ------------------------------------------------------------
+# MODEL PERSISTENCE
+# ------------------------------------------------------------
+joblib==1.4.2                     # Save and load trained sklearn model
+
+# ------------------------------------------------------------
+# REPRODUCIBILITY
+# ------------------------------------------------------------
+tqdm==4.66.4                      # Progress bars for loops (feature engineering, CV)
+
+# ------------------------------------------------------------
+# CODE QUALITY (optional, recommended for clean notebooks)
+# ------------------------------------------------------------
+black==24.4.2                     # Code formatting
+isort==5.13.2                     # Import sorting
