@@ -7,14 +7,16 @@ Handles cloning the repository at notebook startup and pushing
 results back to GitHub when a notebook completes.
 
 Designed to work with a GitHub deploy key added to the repository
-(read/write access). The deploy key private key must be stored in
-Google Drive and its path passed to configure_ssh().
+(read/write access). When configure_ssh() is called, a Colab
+file-upload widget is shown — select your deploy key private key
+from your local machine. The key is written directly into the Colab
+VM and never touches Google Drive.
 
 Typical usage in every notebook
 --------------------------------
-# ── TOP OF NOTEBOOK (after Drive mount) ──────────────────────────
+# ── TOP OF NOTEBOOK ───────────────────────────────────────────────
 from src.git_sync import configure_ssh, clone_or_pull
-configure_ssh()
+configure_ssh()   # ← upload widget appears here
 clone_or_pull()
 
 # ... all notebook work ...
@@ -38,10 +40,6 @@ GITHUB_NAME     = "Kirunda Jeremy Menya"      # used for git config
 # SSH URL — uses the deploy key for authentication
 REPO_SSH_URL    = f"git@github.com:{GITHUB_USERNAME}/{REPO_NAME}.git"
 
-# Where the deploy key private key lives in Google Drive
-# Upload your deploy key private key to Drive and set this path.
-DEPLOY_KEY_DRIVE_PATH = f"/content/drive/MyDrive/{REPO_NAME}/deploy_key"
-
 # Where the key will be installed inside the Colab VM
 DEPLOY_KEY_LOCAL_PATH = "/root/.ssh/deploy_key"
 
@@ -51,7 +49,6 @@ COLAB_CLONE_PATH = f"/content/{REPO_NAME}"
 
 # ── SSH configuration ─────────────────────────────────────────────────────────
 def configure_ssh(
-    deploy_key_drive_path: str = DEPLOY_KEY_DRIVE_PATH,
     deploy_key_local_path: str = DEPLOY_KEY_LOCAL_PATH,
 ) -> None:
     """
@@ -61,18 +58,21 @@ def configure_ssh(
     Must be called once per Colab session, before clone_or_pull()
     or push_to_github().
 
+    When called, a Colab file-upload widget is displayed. Select
+    your deploy key private key file from your local machine — it
+    is written directly into the Colab VM and never touches Drive.
+
     Steps performed:
-        1. Copy the deploy key from Drive to /root/.ssh/
-        2. Set correct permissions (chmod 600) — SSH refuses keys
+        1. Prompt the user to upload the deploy key via Colab widget
+        2. Write the uploaded key bytes to /root/.ssh/
+        3. Set correct permissions (chmod 600) — SSH refuses keys
            that are world-readable
-        3. Write ~/.ssh/config to route github.com through the key
-        4. Add github.com to known_hosts to suppress the host
+        4. Write ~/.ssh/config to route github.com through the key
+        5. Add github.com to known_hosts to suppress the host
            verification prompt that would block non-interactive runs
 
     Parameters
     ----------
-    deploy_key_drive_path : str
-        Path to the private key file in Google Drive.
     deploy_key_local_path : str
         Where to install the key inside the Colab VM.
     """
@@ -80,27 +80,33 @@ def configure_ssh(
         print("[git_sync] Not running in Colab — SSH configuration skipped.")
         return
 
-    # 1. Copy key from Drive
-    if not os.path.exists(deploy_key_drive_path):
-        raise FileNotFoundError(
-            f"\n[git_sync] Deploy key not found at:\n"
-            f"  {deploy_key_drive_path}\n\n"
-            f"To fix this:\n"
-            f"  1. Export your deploy key private key from GitHub:\n"
-            f"     GitHub → repo → Settings → Deploy keys\n"
-            f"  2. Upload the private key file to Google Drive at:\n"
-            f"     {deploy_key_drive_path}\n"
-            f"  3. Re-run this cell."
+    # 1. Prompt for file upload via Colab widget
+    from google.colab import files  # type: ignore  # only available in Colab
+
+    print("[git_sync] Please upload your deploy key private key file.")
+    print("           GitHub → your repo → Settings → Deploy keys → private key file")
+    uploaded = files.upload()
+
+    if not uploaded:
+        raise RuntimeError(
+            "\n[git_sync] No file was uploaded.\n"
+            "  Re-run this cell and select your deploy key private key file."
         )
 
-    os.makedirs("/root/.ssh", exist_ok=True)
-    _run(f"cp '{deploy_key_drive_path}' '{deploy_key_local_path}'")
+    # Accept the first uploaded file regardless of its filename
+    filename, key_bytes = next(iter(uploaded.items()))
+    print(f"[git_sync] Received file: '{filename}' ({len(key_bytes)} bytes)")
 
-    # 2. Correct permissions — SSH will refuse to use a key that
+    # 2. Write key bytes directly into the VM (never touches Drive)
+    os.makedirs("/root/.ssh", exist_ok=True)
+    with open(deploy_key_local_path, "wb") as f:
+        f.write(key_bytes)
+
+    # 3. Correct permissions — SSH will refuse to use a key that
     #    is group- or world-readable (security enforcement).
     _run(f"chmod 600 '{deploy_key_local_path}'")
 
-    # 3. SSH config: use this key for all github.com connections
+    # 4. SSH config: use this key for all github.com connections
     ssh_config = textwrap.dedent(f"""\
         Host github.com
             HostName github.com
@@ -113,10 +119,10 @@ def configure_ssh(
         f.write(ssh_config)
     _run(f"chmod 600 '{config_path}'")
 
-    # 4. Add github.com to known_hosts to prevent interactive prompt
+    # 5. Add github.com to known_hosts to prevent interactive prompt
     _run("ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts 2>/dev/null")
 
-    # 5. Set git identity (required for commits)
+    # 6. Set git identity (required for commits)
     _run(f'git config --global user.email "{GITHUB_EMAIL}"')
     _run(f'git config --global user.name "{GITHUB_NAME}"')
 
