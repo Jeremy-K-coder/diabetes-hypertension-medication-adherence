@@ -6,7 +6,7 @@
 
 *Makerere University | June 2026*
 
-![Adherence Overview](figures/adherence_overview.png)
+![Adherence Overview](figures/eda/adherence_by_condition.png)
 *Medication adherence rate breakdown by condition and insurance tier across the study cohort (Zimbabwe, 2022).*
 
 ---
@@ -149,7 +149,7 @@ The raw wrangling files require nine iterative data preparation steps (ICD-10 fi
 
 **Class distribution:**
 
-![Adherence Distribution](figures/adherence_distribution.png)
+![Adherence Distribution](figures/eda/class_balance.png)
 *Adherence vs. non-adherence breakdown across diabetic and hypertensive patient groups.*
 
 | Label | Class | Approximate Count |
@@ -176,12 +176,6 @@ diabetes-hypertension-medication-adherence/
 │   ├── 04_Optimization_Calibration.ipynb     # Hyperparameter tuning and calibration for top 2 models
 │   └── 05_Explainability_CostAnalysis.ipynb  # Feature group experiment, SHAP analysis, clinical cost evaluation
 │
-├── src/
-│   ├── features.py                           # Feature engineering functions (ratios, gaps, regularity)
-│   ├── pipeline.py                           # sklearn Pipeline builder (scaler + encoder + model)
-│   ├── evaluate.py                           # Metrics: accuracy, F1, AUC, MCC, clinical cost score
-│   ├── cost_matrix.py                        # 2×2 clinical cost matrix and weighted scoring
-│   └── utils.py                              # Reproducibility helpers, plotting utilities
 │
 ├── models/                                   # Saved model pickles — not tracked by git
 │
@@ -292,7 +286,7 @@ All runs share: identical train/validation/test splits, the same SMOTE random se
 
 ## Results
 
-![Feature Group Comparison](figures/feature_group_comparison.png)
+![Feature Group Comparison](figures/feature_group/feature_group_comparison.png)
 *Macro F1 across feature groups A, B, and C on the best tuned model. Populated after running Notebook 05.*
 
 | Classifier | Feature Group | Accuracy | Macro F1 | AUC | MCC | Clinical Cost |
@@ -305,7 +299,7 @@ All runs share: identical train/validation/test splits, the same SMOTE random se
 
 *Full results table populated after running `03_Baseline_Models.ipynb` and `04_Optimization_Calibration.ipynb`.*
 
-![Confusion Matrix](figures/confusion_matrix_best.png)
+![Confusion Matrix](figures/cost_analysis/confusion_matrix_best_test.png)
 *Confusion matrix of the best-performing model on the held-out test set.*
 
 ![ROC Curves](figures/roc_auc_comparison.png)
@@ -317,7 +311,7 @@ All runs share: identical train/validation/test splits, the same SMOTE random se
 
 SHAP (SHapley Additive exPlanations) is applied to the best tuned model to provide both global and local interpretability.
 
-![SHAP Beeswarm](figures/feature_importance_shap.png)
+![SHAP Beeswarm](figures/shap/shap_beeswarm.png)
 *SHAP beeswarm plot showing the contribution of each feature to adherence predictions. Each point is a patient; colour indicates feature value (red = high, blue = low).*
 
 Three analytical questions guide SHAP interpretation:
