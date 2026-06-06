@@ -6,7 +6,6 @@
 # DATA — raw or processed patient data
 # ------------------------------------------------------------
 data/raw/
-data/processed/
 data/interim/
 *.xlsx
 *.xls
